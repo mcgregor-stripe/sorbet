@@ -503,7 +503,8 @@ public:
         }
 
         core::FoundField found;
-        found.kind = uid->kind == ast::UnresolvedIdent::Kind::Instance ? core::FoundField::Kind::Instance : core::FoundField::Kind::Class;
+        found.kind = uid->kind == ast::UnresolvedIdent::Kind::Instance ? core::FoundField::Kind::Instance
+                                                                       : core::FoundField::Kind::Class;
         found.owner = getOwner();
         found.loc = uid->loc;
         found.name = uid->name;
@@ -1115,7 +1116,7 @@ class SymbolDefiner {
 
             // We are on the fast path and there was a previous declaration.
             // TODO(froydnj) apparently incremental resolve can't add new symbols?!
-            //ctx.state.mangleRenameSymbol(existing, existing.data(ctx)->name);
+            // ctx.state.mangleRenameSymbol(existing, existing.data(ctx)->name);
             prior.data(ctx)->resultType = core::Types::todo();
             return prior;
         }
@@ -1285,10 +1286,10 @@ class SymbolDefiner {
                 insertField(ctx.withOwner(getOwnerSymbol(field.owner)), field);
                 break;
             }
-        case core::FoundDefinitionRef::Kind::ClassRef: {
-            ENFORCE(false, "unhandled class ref");
-            break;
-        }
+            case core::FoundDefinitionRef::Kind::ClassRef: {
+                ENFORCE(false, "unhandled class ref");
+                break;
+            }
             default:
                 ENFORCE(false, "unhandled other kind");
                 break;
