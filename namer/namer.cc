@@ -584,6 +584,8 @@ class SymbolDefiner {
                 return definedClasses[ref.idx()];
             case core::FoundDefinitionRef::Kind::Method:
                 ENFORCE(ref.idx() < definedMethods.size());
+                // Ensure that nobody is trying to reference alias methods.
+                ENFORCE(definedMethods[ref.idx()].exists());
                 return definedMethods[ref.idx()];
             default:
                 Exception::raise("Invalid owner reference");
@@ -1376,6 +1378,10 @@ public:
                 // We need alias methods in the FoundDefinitions list not so that we can actually
                 // create method symbols for them yet, but just so we can know which alias methods
                 // to delete on the fast path. Alias methods will be defined later, in resolver.
+                //
+                // We still need to put something here so that other found definitions that
+                // reference methods will get the correct symbols.
+                definedMethods.emplace_back(core::MethodRef{});
                 continue;
             }
             definedMethods.emplace_back(insertMethod(ctx.withOwner(getOwnerSymbol(method.owner)), method));
